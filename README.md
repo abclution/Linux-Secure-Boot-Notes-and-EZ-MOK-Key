@@ -40,7 +40,7 @@ Can be found if generated,
 Usually here named:  /var/lib/shim-signed/mok/MOK.priv
 Usually here named:  /var/lib/dkms/mok.key
 
-What it is: An x509 certificate (public) in the DER bin format.
+What it is: An x509 certificate (public) in the DER binary format.
 Used for: Enrollment into your BIOS to authorize binaries signed with the private key.
 
 --------------------------------
@@ -50,7 +50,8 @@ MOK.pem - Most tutorials tell you to generate this.
 Most tutorials say to create it here: /var/lib/shim-signed/mok/MOK.pem    
 Is not present when DKMS module signing happens: /var/lib/dkms/mok.pem
 
-What it is: An x509 certificate (public) in ASCII format. It can be generated from the DER bin format file.
+What it is: An x509 certificate (public) in ASCII format. It can be generated from the DER bin format file. (openssl x509 -inform der -in certificate-in-der-format.der -out certificate-in-pem-format.pem
+
 Used for: Signing EFI BINARIES and custom KERNELS.
 
 --------------------------------
@@ -65,6 +66,27 @@ What it is: x509 private key (ASCII format)
 Used for: Generating public certificates which the certificates are used for enrollment and signing binaries. Keep it private.
 
 
+----------------------------------
 
+How to use all this stuff.
+
+Either use the previously generated private keys and certs or create your own from scratch. The included bash script can assist with this.
+Once generated, enroll your DER format certificate in your bios, reboot.
+Check/edit your /etc/dkms/framework.conf and make sure your files match the positions in there.
+Recompile your out of band modules with your MOK and they should be able to load.
+
+Signing a custom kernel or EFI binary 
+
+To sign an EFI binary or kernel, you need the PEM certificate and your PRIVATE KEY. 
+sbsign --key MOK.privkey.key --cert MOK.cert.pem BINARY.EFI --output BINARY-SIGNED.EFI
+
+The move / rename the signed binary to where it is needed.
+The same process works for vmlinuz kernels etc.
+
+------------------------------------------
+
+
+I was successfully able to sign both the EFI and component (kernel + init) of ZFSBootMenu.
+However on my system I am only able to boot the component version and could not test the EFI version.
 
 
