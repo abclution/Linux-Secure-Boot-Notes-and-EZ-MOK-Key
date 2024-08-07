@@ -68,20 +68,19 @@ Used for: Generating public certificates which the certificates are used for enr
 
 ----------------------------------
 
-How to use all this stuff.
+### How to use all this stuff.
 
-Either use the previously generated private keys and certs or create your own from scratch. The included bash script can assist with this.
-Once generated, enroll your DER format certificate in your bios, reboot.
-Check/edit your /etc/dkms/framework.conf and make sure your files match the positions in there.
-Recompile your out of band modules with your MOK and they should be able to load.
+- Either use the previously generated private keys and certs or create your own from scratch. The included bash script can assist with this.
+- Once generated, enroll your DER format certificate in your bios, reboot.
+- Check/edit your /etc/dkms/framework.conf and make sure your files match the positions in there.
+- Recompile your out of band modules with your MOK and they should be able to load.
 
-Signing a custom kernel or EFI binary 
+### Signing a custom kernel or EFI binary 
 
-To sign an EFI binary or kernel, you need the PEM certificate and your PRIVATE KEY. 
-sbsign --key MOK.privkey.key --cert MOK.cert.pem BINARY.EFI --output BINARY-SIGNED.EFI
-
-The move / rename the signed binary to where it is needed.
-The same process works for vmlinuz kernels etc.
+- To sign an EFI binary or kernel, you need the PEM certificate and your PRIVATE KEY. 
+- sbsign --key MOK.privkey.key --cert MOK.cert.pem BINARY.EFI --output BINARY-SIGNED.EFI
+- The move / rename the signed binary to where it is needed.
+- The same process works for vmlinuz kernels etc.
 
 ------------------------------------------
 
