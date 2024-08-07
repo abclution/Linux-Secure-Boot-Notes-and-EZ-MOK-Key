@@ -29,6 +29,42 @@ A similar problem arises when you want to use refind as your EFI boot loader as 
 
 When building DKMS modules on most systems, DKMS will notice you need a signed module and usually create set of keys and certs, called the MOK certificate / key, or Machine Owner Key. It will sign the modules with these but it is your responsibility to enroll the certificate in your machines BIOS. This was the case for me.
 
-Additionally, systemd-boot is NOT supported (as far as I know) if you need out of band drivers as the signed EFI shim only works with the GRUB bootloader.
+Additionally, systemd-boot is NOT supported (as far as I know) if you need out of band drivers as the signed EFI shim only works with the GRUB bootloader and the software, Mok Manager is part of the signed grub package as far as I know.
+
+Additionally, most tutorials and documentation use inconsistent naming for the related files, keys and certs as well as inconsistent placement. I've collected what I know here.
+
+MOK.der - Common name in most tutorials showing how to create your own key.
+mok.pub - Created by DKMS (On Debian 12/Proxmox) when trying to install out of band drivers.
+
+Can be found if generated,  
+Usually here named:  /var/lib/shim-signed/mok/MOK.priv
+Usually here named:  /var/lib/dkms/mok.key
+
+What it is: An x509 certificate (public) in the DER bin format.
+Used for: Enrollment into your BIOS to authorize binaries signed with the private key.
+
+--------------------------------
+mok.pem - Not referenced or created by DKMS auto sign generator 
+MOK.pem - Most tutorials tell you to generate this.
+
+Most tutorials say to create it here: /var/lib/shim-signed/mok/MOK.pem    
+Is not present when DKMS module signing happens: /var/lib/dkms/mok.pem
+
+What it is: An x509 certificate (public) in ASCII format. It can be generated from the DER bin format file.
+Used for: Signing EFI BINARIES and custom KERNELS.
+
+--------------------------------
+
+mok.key / MOK.key - DKMS auto generates the first. 
+MOK.priv - Most tutorials tell you to generate this.
+
+Most tutorials say to create it here:  /var/lib/shim-signed/mok/MOK.priv
+DKMS can autogenerate it here named:   /var/lib/dkms/mok.key
+
+What it is: x509 private key (ASCII format) 
+Used for: Generating public certificates which the certificates are used for enrollment and signing binaries. Keep it private.
+
+
+
 
 
