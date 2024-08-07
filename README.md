@@ -33,45 +33,52 @@ Additionally, systemd-boot is NOT supported (as far as I know) if you need out o
 
 Additionally, most tutorials and documentation use inconsistent naming for the related files, keys and certs as well as inconsistent placement. I've collected what I know here.
 
-MOK.der - Common name in most tutorials showing how to create your own key.
-mok.pub - Created by DKMS (On Debian 12/Proxmox) when trying to install out of band drivers.
-
-Can be found if generated,  
-Usually here named:  /var/lib/shim-signed/mok/MOK.priv
-Usually here named:  /var/lib/dkms/mok.key
-
-What it is: An x509 certificate (public) in the DER binary format.
-Used for: Enrollment into your BIOS to authorize binaries signed with the private key.
-
---------------------------------
-mok.pem - Not referenced or created by DKMS auto sign generator 
-MOK.pem - Most tutorials tell you to generate this.
-
-Most tutorials say to create it here: /var/lib/shim-signed/mok/MOK.pem    
-Is not present when DKMS module signing happens: /var/lib/dkms/mok.pem
-
-What it is: An x509 certificate (public) in ASCII format. It can be generated from the DER bin format file. (openssl x509 -inform der -in certificate-in-der-format.der -out certificate-in-pem-format.pem
-
-Used for: Signing EFI BINARIES and custom KERNELS.
-
 --------------------------------
 
-mok.key / MOK.key - DKMS auto generates the first. 
-MOK.priv - Most tutorials tell you to generate this.
+- MOK.der - Common name in most tutorials showing how to create your own key.
+- mok.pub - Created by DKMS (On Debian 12/Proxmox) when trying to install out of band drivers.
 
-Most tutorials say to create it here:  /var/lib/shim-signed/mok/MOK.priv
-DKMS can autogenerate it here named:   /var/lib/dkms/mok.key
+  
+- Tutorials generate usually here named:  /var/lib/shim-signed/mok/MOK.priv
+- DKMS generates it usually here named:  /var/lib/dkms/mok.key
 
-What it is: x509 private key (ASCII format) 
-Used for: Generating public certificates which the certificates are used for enrollment and signing binaries. Keep it private.
+
+- What it is: An x509 certificate (public) in the DER binary format.
+- Used for: Enrollment into your BIOS to authorize binaries signed with the private key.
+
+--------------------------------
+- mok.pem - Not referenced or created by DKMS auto sign generator 
+- MOK.pem - Most tutorials tell you to generate this.
+
+
+- Most tutorials say to create it here: /var/lib/shim-signed/mok/MOK.pem    
+- Is not present when DKMS module signing happens: /var/lib/dkms/mok.pem
+
+
+- What it is: An x509 certificate (public) in ASCII format. It can be generated from the DER bin format file. openssl x509 -inform der -in certificate-in-der-format.der -out certificate-in-pem-format.pem
+
+- Used for: Signing EFI BINARIES and custom KERNELS.
+
+--------------------------------
+
+- mok.key / MOK.key - DKMS auto generates the first. 
+- MOK.priv - Most tutorials tell you to generate this.
+
+
+- Most tutorials say to create it here:  /var/lib/shim-signed/mok/MOK.priv
+- DKMS can autogenerate it here named:   /var/lib/dkms/mok.key
+
+- What it is: x509 private key (ASCII format) 
+- Used for: Generating public certificates which the certificates are used for enrollment and signing binaries. Keep it private.
 
 
 ----------------------------------
 
 ### How to use all this stuff.
 
-- Either use the previously generated private keys and certs or create your own from scratch. The included bash script can assist with this.
+- Either use the previously generated private keys and certs or create your own from scratch. 
 - Once generated, enroll your DER format certificate in your bios, reboot.
+- The included bash script can assist with both steps above.
 - Check/edit your /etc/dkms/framework.conf and make sure your files match the positions in there.
 - Recompile your out of band modules with your MOK and they should be able to load.
 
